@@ -1,13 +1,49 @@
 package testprioritization.core;
 
-import java.util.Set;
+import com.sun.tools.javac.util.Pair;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CommandGraph {
 
-    Set<Edge> edges;
+    private final List<Edge> edges;
 
+    public static CommandGraph fromEdges(List<Edge> edges) {
+        return new CommandGraph(edges);
+    }
 
-    private final class Edge {
+    public static CommandGraph empty() {
+        return new CommandGraph(new ArrayList<>());
+    }
+
+    private CommandGraph(List<Edge> edges) {
+        this.edges = edges;
+    }
+
+    public float getWeightFor(Pair<TestStep, TestStep> pairOfTestSteps) {
+        for (Edge edge : edges) {
+            if (edge.equalsToPair(pairOfTestSteps)) {
+                return edge.weight;
+            }
+        }
+        return 0f;
+    }
+
+    public CommandGraph mergeWith(CommandGraph otherGraph) {
+        List<Edge> newEdges = edges;
+        for (Edge edgeFromOtherGraph : otherGraph.edges) {
+            if (newEdges.contains(edgeFromOtherGraph)) {
+                int indexToUpdate = newEdges.indexOf(edgeFromOtherGraph);
+                newEdges.get(indexToUpdate).mergeEdge(edgeFromOtherGraph);
+            } else {
+                newEdges.add(edgeFromOtherGraph);
+            }
+        }
+        return CommandGraph.fromEdges(newEdges);
+    }
+
+    static final class Edge {
 
         private final TestStep step1;
         private final TestStep step2;
@@ -26,9 +62,18 @@ public class CommandGraph {
             }
         }
 
+        public boolean equalsToPair(Pair<TestStep, TestStep> pairOfTestSteps) {
+            return pairOfTestSteps.fst == step1 && pairOfTestSteps.snd == step2;
+        }
+
         @Override
-        public boolean equals(Object obj) {
-            Edge otherEdge = (Edge) obj;
+        public boolean equals(Object other) {
+            boolean incompatibleType = ! (other instanceof Edge);
+            if (incompatibleType) {
+                return false;
+            }
+
+            Edge otherEdge = (Edge) other;
             return step1 == otherEdge.step1 && step2 == otherEdge.step2;
         }
     }

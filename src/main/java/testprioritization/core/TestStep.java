@@ -7,4 +7,8 @@ public class TestStep {
     TestStep(String command) {
         this.command = command;
     }
+
+    public String getCommand() {
+        return command;
+    }
 }
