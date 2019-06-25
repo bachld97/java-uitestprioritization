@@ -4,8 +4,5 @@ import java.util.List;
 
 public interface PrioritizationSession {
     public List<TestCase> prioritizeSuiteAtPath(String path);
-
-    class Builder {
-
-    }
+    public void evaluateExecutionInstanceWithReportAtPath(String path);
 }

@@ -15,4 +15,8 @@ public class TestSuite {
     public List<TestCase> getTestCases() {
         return testCases;
     }
+
+    public String getId() {
+        return this.id;
+    }
 }

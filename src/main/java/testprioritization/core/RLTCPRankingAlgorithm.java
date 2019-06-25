@@ -9,36 +9,31 @@ import java.util.stream.Collectors;
 
 public class RLTCPRankingAlgorithm implements RankingAlgorithm {
     private final Options options;
-    private final CommandGraphSaver saver;
-    private final CommandGraphLoader loader;
+    private final CommandGraphPersistence graphPersistence;
 
     private final Stopper stopper = new Stopper();
 
     private CommandGraph currentGraph = null;
 
     public RLTCPRankingAlgorithm(
-        CommandGraphSaver saver,
-        CommandGraphLoader loader
+        CommandGraphPersistence graphPersistence
     ) {
-        this.saver = saver;
-        this.loader = loader;
+        this.graphPersistence = graphPersistence;
         this.options = new Options();
     }
 
     public RLTCPRankingAlgorithm(
-        CommandGraphSaver saver,
-        CommandGraphLoader loader,
+        CommandGraphPersistence graphPersistence,
         Options options
     ) {
-        this.saver = saver;
-        this.loader = loader;
+        this.graphPersistence = graphPersistence;
         this.options = options;
     }
 
     @Override
     public List<TestCase> rankTestCasesIn(TestSuite suite) {
         if (currentGraph == null) {
-            currentGraph = loader.loadCommandGraph();
+            currentGraph = graphPersistence.loadCommandGraph();
         }
 
         ArrayList<TestCaseWrapper> wrappedTestCases = new ArrayList<>();
@@ -49,9 +44,12 @@ public class RLTCPRankingAlgorithm implements RankingAlgorithm {
         }
 
         Collections.sort(wrappedTestCases);
-        return wrappedTestCases.stream()
+        List<TestCase> rankedTestCases = wrappedTestCases.stream()
                 .map(TestCaseWrapper::getTestCase)
                 .collect(Collectors.toList());
+
+        graphPersistence.saveRankedTestCasesForSuite(rankedTestCases, suite);
+        return rankedTestCases;
     }
 
     private float calculateWeightFor(TestCase testCase) {
@@ -74,7 +72,7 @@ public class RLTCPRankingAlgorithm implements RankingAlgorithm {
         boolean firstLoop = true;
         boolean notDone = true;
         TestSuite suiteUnderExecution = executionResult.getSuiteUnderExecution();
-        List<TestCase> previouslyRankedTestCases = loader.loadRankedTestCaseForSuite(suiteUnderExecution);
+        List<TestCase> previouslyRankedTestCases = graphPersistence.loadRankedTestCaseForSuite(suiteUnderExecution);
         int currentIterationCount = 0;
 
         while (notDone && currentIterationCount < options.maxTrainingIteration) {
@@ -92,10 +90,10 @@ public class RLTCPRankingAlgorithm implements RankingAlgorithm {
             notDone = stopper.shouldContinueTraining(executionResult, previouslyRankedTestCases);
         }
 
-         saver.save(currentGraph);
+         graphPersistence.save(currentGraph);
     }
 
-    class Options {
+    public static class Options {
         public final float graphMergeDiscount;
         public final float penaltyDecayRate;
         public final int maxTrainingIteration;
@@ -106,6 +104,14 @@ public class RLTCPRankingAlgorithm implements RankingAlgorithm {
         public Options() {
             this.graphMergeDiscount = 0.8f;
             this.penaltyDecayRate = 0.8f;
+            this.maxTrainingIteration = 200;
+            this.penaltyForFailedTestCases = 10f;
+            this.penaltyForMisplacedTestCases = 5f;
+        }
+
+        public Options(float graphMergeDiscount, float penaltyDecayRate) {
+            this.graphMergeDiscount = graphMergeDiscount;
+            this.penaltyDecayRate = penaltyDecayRate;
             this.maxTrainingIteration = 200;
             this.penaltyForFailedTestCases = 10f;
             this.penaltyForMisplacedTestCases = 5f;
