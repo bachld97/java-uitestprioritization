@@ -1,6 +1,7 @@
 package testprioritization.core.demo;
 
 import testprioritization.core.*;
+import testprioritization.core.katalonstudio.KatalonPathMapper;
 import testprioritization.core.katalonstudio.KatalonReportsParser;
 import testprioritization.core.katalonstudio.KatalonScriptParser;
 
@@ -18,8 +19,22 @@ import java.util.Map;
  * - - Evaluate APFD  against the last iteration
  */
 public class EvaluationDemo {
-    private KatalonScriptParser scriptParser = new KatalonScriptParser();
-    private KatalonReportsParser reportsParser = new KatalonReportsParser();
+    private final KatalonScriptParser scriptParser = new KatalonScriptParser();
+    private final KatalonReportsParser reportsParser = new KatalonReportsParser();
+
+    private final String projectBasePath;
+
+    private final KatalonPathMapper pathMapper = new KatalonPathMapper();
+
+    private final String scriptsPath;
+    private final String reportsPath;
+
+    public EvaluationDemo(String projectBasePath) {
+        this.projectBasePath = projectBasePath;
+        scriptsPath = pathMapper.getScriptPathFromBasePath(projectBasePath);
+        reportsPath = pathMapper.getReportsPathFromBasePath(projectBasePath);
+    }
+
 
     private List<RankingAlgorithm> rankingAlgorithms = Arrays.asList(
         new RLTCPRankingAlgorithm(
