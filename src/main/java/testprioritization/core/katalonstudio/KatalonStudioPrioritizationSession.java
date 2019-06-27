@@ -26,7 +26,7 @@ public class KatalonStudioPrioritizationSession implements PrioritizationSession
 
     @Override
     public void evaluateExecutionInstanceWithReportAtPath(String path) {
-        ExecutionResult executionResult = reportsParser.readExecutionInfoFromReportAt(path);
+        ExecutionResult executionResult = reportsParser.readOneExecutionResultFromReport(path);
         rankingAlgorithm.onTestExecutionResult(executionResult);
     }
 }

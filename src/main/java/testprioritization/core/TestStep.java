@@ -4,7 +4,7 @@ public class TestStep {
 
     private final String command;
 
-    TestStep(String command) {
+    public TestStep(String command) {
         this.command = command;
     }
 

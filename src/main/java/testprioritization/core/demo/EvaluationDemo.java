@@ -77,9 +77,13 @@ public class EvaluationDemo {
 
 
     public void execute() {
-
-        // TODO: Begin demo execution
-
+        // Read all reports for all previous run
+        // Read script for current iteration
+        // For each method
+        // .... For each report (until the last one)
+        // ........ Perform prioritization on report
+        // .... Perform prioritization on script
+        // .... Perform APFD evaluation for this method
     }
 
     private class DemoGraphPersistence implements CommandGraphPersistence {

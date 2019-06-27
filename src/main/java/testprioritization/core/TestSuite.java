@@ -7,7 +7,7 @@ public class TestSuite {
 
     private final List<TestCase> testCases;
 
-    TestSuite(String id, List<TestCase> testCases) {
+    public TestSuite(String id, List<TestCase> testCases) {
         this.id = id;
         this.testCases = testCases;
     }
