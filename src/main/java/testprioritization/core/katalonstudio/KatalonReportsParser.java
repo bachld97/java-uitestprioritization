@@ -126,7 +126,7 @@ public class KatalonReportsParser {
     }
 
     private String convertToCommand(String rawCommandInCSV) {
-        return "";
+        return rawCommandInCSV;
     }
 
 
