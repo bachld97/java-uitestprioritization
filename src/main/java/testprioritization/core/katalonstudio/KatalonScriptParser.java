@@ -26,7 +26,7 @@ public class KatalonScriptParser {
             Document document = documentBuilder.parse(testSuite);
 
             // get test suite name
-            String testSuiteName = document.getElementsByTagName("name").item(1).getTextContent();
+            String testSuiteName = document.getElementsByTagName("name").item(0).getTextContent();
 
             // get all the testCaseId tags
             NodeList testCaseIdTags = document.getElementsByTagName("testCaseId");
