@@ -84,6 +84,9 @@ public class EvaluationDemo {
         // ........ Perform prioritization on report
         // .... Perform prioritization on script
         // .... Perform APFD evaluation for this method
+
+        List<ExecutionResult> executionResults = reportsParser.readAllExecutionResultsFromReportsAt(reportsPath);
+        TestSuite lastExecutedSuiteFromScript = scriptParser.readTestSuiteFromInputAt(scriptsPath);
     }
 
     private class DemoGraphPersistence implements CommandGraphPersistence {

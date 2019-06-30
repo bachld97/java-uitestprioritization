@@ -1,6 +1,5 @@
 package testprioritization.core.katalonstudio;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import testprioritization.core.ExecutionResult;
 import testprioritization.core.TestCase;
 import testprioritization.core.TestStep;
@@ -65,14 +64,12 @@ public class KatalonReportsParser {
             String line = bufferedReader.readLine();
             boolean notEOF = (line != null);
             while (notEOF) {
-                String[] lineAfterSplit =  line.split(CSV_DELIM);
-
                 if (thisRowIsHeader) {
                     // Skip this row
                     thisRowIsHeader = false;
                 } else if (thisRowIsSuiteInfo) {
                     thisRowIsSuiteInfo = false;
-                    suiteId = line.split(CSV_DELIM)[0];
+                    suiteId = getIdStringFrom(line);
                 } else if (isEmptyRow(line)) {
                     // Conclude previous test case result
                     thisRowIsTestCaseHeader = true;
@@ -86,10 +83,10 @@ public class KatalonReportsParser {
                 } else if (thisRowIsTestCaseHeader) {
                     // Begin new test case result
                     thisRowIsTestCaseHeader = false;
-                    currentTestCaseId = lineAfterSplit[0];
+                    currentTestCaseId = getIdStringFrom(line);
                     stepsInCurrentTestCase = new ArrayList<>();
 
-                    String statusString = lineAfterSplit[lineAfterSplit.length - 1];
+                    String statusString = getStatusStringFrom(line);
                     boolean testCaseDidFail = (
                         statusString.equalsIgnoreCase("failed") ||
                         statusString.equalsIgnoreCase("error")
@@ -97,8 +94,8 @@ public class KatalonReportsParser {
                     didFailMap.put(currentTestCaseId, testCaseDidFail);
                 } else {
                     // Continue expanding current test case result
-                    String command = convertToCommand(lineAfterSplit[0]);
-                    String statusString = lineAfterSplit[lineAfterSplit.length - 1];
+                    String command = convertToCommand(getCommandStringFrom(line));
+                    String statusString = getStatusStringFrom(line);
                     TestStep currentStep = new TestStep(command);
                     boolean testStepDidFail = (
                         statusString.equalsIgnoreCase("failed") ||
@@ -123,6 +120,62 @@ public class KatalonReportsParser {
             e.printStackTrace();
             return ExecutionResult.empty();
         }
+    }
+
+    private String getIdStringFrom(String lineFromCsv) {
+        return getFirstCsvElement(lineFromCsv);
+    }
+
+    private String getCommandStringFrom(String lineFromCsv) {
+        return getFirstCsvElement(lineFromCsv);
+    }
+
+    private String getFirstCsvElement(String lineFromCsv) {
+        char CHAR_QUOTE = '\"';
+        char CHAR_COMMA = ',';
+
+        // The lineFromCsv must at least be ""
+        if (lineFromCsv.length() < 2) {
+            return lineFromCsv;
+        }
+
+        int startIndex = lineFromCsv.charAt(0) == CHAR_QUOTE ? 1 : 0;
+        int endIndex = startIndex;
+        boolean isNumberOfQuotesBalanced = lineFromCsv.charAt(0) != CHAR_QUOTE;
+        boolean notFoundCommaOutsideQuote = true;
+        int lineLength = lineFromCsv.length();
+
+        // Find first comma outside enclosing quote
+        while (endIndex < lineLength && notFoundCommaOutsideQuote) {
+            char currentChar = lineFromCsv.charAt(endIndex);
+            if (currentChar == CHAR_QUOTE) {
+                isNumberOfQuotesBalanced = ! isNumberOfQuotesBalanced;
+            } else if (currentChar == CHAR_COMMA) {
+                notFoundCommaOutsideQuote = ! isNumberOfQuotesBalanced;
+            }
+
+            if (notFoundCommaOutsideQuote) {
+                endIndex += 1;
+            }
+        }
+
+        if (lineFromCsv.charAt(endIndex - 1) == CHAR_QUOTE) {
+            endIndex -= 1;
+        }
+
+        String result =  lineFromCsv.substring(startIndex, endIndex);
+        return result;
+    }
+
+    // This works as expected because the status does not contains special characters
+    private String getStatusStringFrom(String lineFromCsv) {
+        String[] lineAfterSplit = lineFromCsv.split(CSV_DELIM);
+
+        if (lineAfterSplit.length == 0) {
+            return lineFromCsv;
+        }
+
+        return lineAfterSplit[lineAfterSplit.length - 1];
     }
 
     private String convertToCommand(String rawCommandInCSV) {

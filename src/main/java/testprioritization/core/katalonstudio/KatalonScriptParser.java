@@ -60,10 +60,10 @@ public class KatalonScriptParser {
     }
 
     private String convertToCsvCommand(String rawCommand) {
-        return rawCommand.replace("\'", "\"").replace("WebUI.", "");
+        return rawCommand.replace("\'", "\"\"").replace("WebUI.", "");
     }
 
-    public TestCase readTestCaseFromScript(String testCaseId, String scriptPath) {
+    private TestCase readTestCaseFromScript(String testCaseId, String scriptPath) {
         try {
             FileReader fileReader = new FileReader(scriptPath);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
