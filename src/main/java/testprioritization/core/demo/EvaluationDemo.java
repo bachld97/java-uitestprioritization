@@ -5,10 +5,7 @@ import testprioritization.core.katalonstudio.KatalonPathMapper;
 import testprioritization.core.katalonstudio.KatalonReportsParser;
 import testprioritization.core.katalonstudio.KatalonScriptParser;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /*
@@ -87,6 +84,21 @@ public class EvaluationDemo {
 
         List<ExecutionResult> executionResults = reportsParser.readAllExecutionResultsFromReportsAt(reportsPath);
         TestSuite lastExecutedSuiteFromScript = scriptParser.readTestSuiteFromInputAt(scriptsPath);
+
+        for (RankingAlgorithm rankingAlgorithm : rankingAlgorithms) {
+            rankHistoricalExecutions(rankingAlgorithm, executionResults);
+        }
+    }
+
+    private List<List<TestCase>> rankHistoricalExecutions(RankingAlgorithm rankingAlgorithm, List<ExecutionResult> executionResults) {
+        List<List<TestCase>> historicalOrders = new ArrayList<>();
+        for (ExecutionResult result : executionResults) {
+            List<TestCase> order = rankingAlgorithm.rankTestCasesIn(result.getSuiteUnderExecution());
+            rankingAlgorithm.onTestExecutionResult(result);
+            historicalOrders.add(order);
+        }
+
+        return historicalOrders;
     }
 
     private class DemoGraphPersistence implements CommandGraphPersistence {
