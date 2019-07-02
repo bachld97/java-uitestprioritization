@@ -23,4 +23,8 @@ public class KatalonPathMapper {
 
         return pathBuilder.toString();
     }
+
+    public String getTestSuiteFromBasePath(String projectBasePath) {
+        return "";
+    }
 }
