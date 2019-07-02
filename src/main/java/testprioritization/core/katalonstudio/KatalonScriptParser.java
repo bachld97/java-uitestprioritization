@@ -16,9 +16,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class KatalonScriptParser {
-    public TestSuite readTestSuiteFromInputAt(String path) {
+    private final String scriptsPath;
+
+    public KatalonScriptParser(String scriptsPath) {
+        this.scriptsPath = scriptsPath;
+    }
+
+    public TestSuite readTestSuiteFromInputAt(String testSuitePath) {
         try {
-            File testSuite = new File(path);
+            File testSuite = new File(testSuitePath);
 
             // use XML parser to read .ts file
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -48,15 +54,22 @@ public class KatalonScriptParser {
 
             return new TestSuite(testSuiteName, testCases);
         } catch (Exception e) {
-            System.err.format("Cannot read test suite file '%s", path);
+            System.err.format("Cannot read test suite file '%s", testSuitePath);
             e.printStackTrace();
             return null;
         }
     }
 
     private List<String> convertToPaths(List<String> testCaseIds) {
-        // help me :(
-        return new ArrayList<>();
+        List<String> scriptFilesPaths = new ArrayList<>();
+        int testCasePartLength = "Test Cases/".length();
+        for (String testCaseId : testCaseIds) {
+            // must trim the first part (Test Cases/)
+            scriptFilesPaths.add(this.scriptsPath + testCaseId.substring(testCasePartLength) + "/");
+
+            // TODO: how to append the *.groovy file in the folder
+        }
+        return scriptFilesPaths;
     }
 
     private String convertToCsvCommand(String rawCommand) {

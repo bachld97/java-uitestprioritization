@@ -19,12 +19,19 @@ public class KatalonPathMapper {
         if (! projectBasePath.endsWith("/")) {
             pathBuilder.append("/");
         }
-        pathBuilder.append("Reports/");
+        pathBuilder.append("Reports/All/");
 
         return pathBuilder.toString();
     }
 
     public String getTestSuiteFromBasePath(String projectBasePath) {
-        return "";
+        StringBuilder pathBuilder = new StringBuilder();
+        pathBuilder.append(projectBasePath);
+        if (! projectBasePath.endsWith("/")) {
+            pathBuilder.append("/");
+        }
+        pathBuilder.append("Test Suites/All.ts");
+
+        return pathBuilder.toString();
     }
 }

@@ -16,7 +16,7 @@ import java.util.*;
  * - - Evaluate APFD  against the last iteration
  */
 public class EvaluationDemo {
-    private final KatalonScriptParser scriptParser = new KatalonScriptParser();
+    private final KatalonScriptParser scriptParser;
     private final KatalonReportsParser reportsParser = new KatalonReportsParser();
 
     private final String projectBasePath;
@@ -32,6 +32,7 @@ public class EvaluationDemo {
         scriptsPath = pathMapper.getScriptPathFromBasePath(projectBasePath);
         reportsPath = pathMapper.getReportsPathFromBasePath(projectBasePath);
         testSuitePath = pathMapper.getTestSuiteFromBasePath(projectBasePath);
+        scriptParser = new KatalonScriptParser(scriptsPath);
     }
 
 
