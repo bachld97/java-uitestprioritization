@@ -117,6 +117,7 @@ public class EvaluationDemo {
             for (int index = 0; index < numberOfTestCases; index++) {
                 results.add(100f);
             }
+            return results;
         }
 
         for (int index = 0; index < numberOfTestCases; index++) {
