@@ -92,8 +92,6 @@ public class EvaluationDemo {
             rankHistoricalExecutions(rankingAlgorithm, executionResults);
             List<TestCase> lastOrder = rankingAlgorithm.rankTestCasesIn(lastExecutedSuiteFromScript);
             ExecutionResult lastResult = executionResults.get(executionResults.size() - 1);
-            float apfd = calculateAPFD(lastOrder, lastResult);
-            System.out.println(rankingAlgorithm.getClass().toString() + ": " + apfd);
         }
     }
 
@@ -103,6 +101,9 @@ public class EvaluationDemo {
             List<TestCase> order = rankingAlgorithm.rankTestCasesIn(result.getSuiteUnderExecution());
             rankingAlgorithm.onTestExecutionResult(result);
             historicalOrders.add(order);
+
+            float apfd = calculateAPFD(order, result);
+            System.out.println(rankingAlgorithm.stringToDisplayApfd(apfd));
         }
 
         return historicalOrders;

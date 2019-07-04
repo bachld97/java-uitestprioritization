@@ -12,14 +12,19 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class KatalonScriptParser {
-    private final String scriptsPath;
+    private final String scriptBasePath;
 
-    public KatalonScriptParser(String scriptsPath) {
-        this.scriptsPath = scriptsPath;
+    public KatalonScriptParser(String scriptBasePath) {
+        this.scriptBasePath = scriptBasePath;
     }
 
     public TestSuite readTestSuiteFromInputAt(String testSuitePath) {
@@ -61,15 +66,41 @@ public class KatalonScriptParser {
     }
 
     private List<String> convertToPaths(List<String> testCaseIds) {
-        List<String> scriptFilesPaths = new ArrayList<>();
+        List<String> pathsForTestScripts = new ArrayList<>();
+
         int testCasePartLength = "Test Cases/".length();
         for (String testCaseId : testCaseIds) {
             // must trim the first part (Test Cases/)
-            scriptFilesPaths.add(this.scriptsPath + testCaseId.substring(testCasePartLength) + "/");
-
-            // TODO: how to append the *.groovy file in the folder
+            String testCaseName = testCaseId.substring(testCasePartLength);
+            String scriptFolder = scriptBasePath + testCaseName + "/";
+            String scriptFile = getGroovyScriptFullPathInFolder(scriptFolder);
+            pathsForTestScripts.add(scriptFile);
         }
-        return scriptFilesPaths;
+
+        return pathsForTestScripts;
+    }
+
+    private String getGroovyScriptFullPathInFolder(String folderPath) {
+
+        List<String> scripts = null;
+        try {
+            scripts = Files.walk(Paths.get(folderPath)).filter(
+                Files::isRegularFile
+            ).filter(
+                path -> path.toString().endsWith(".groovy")
+            ).map(
+                Path::toString
+            ).collect(Collectors.toList());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "error";
+        }
+
+        if (scripts.size() == 0) {
+            return "error";
+        } else {
+            return scripts.get(0);
+        }
     }
 
     private String convertToCsvCommand(String rawCommand) {

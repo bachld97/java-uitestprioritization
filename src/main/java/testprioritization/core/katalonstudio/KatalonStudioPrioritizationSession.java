@@ -7,15 +7,18 @@ import java.util.List;
 // For use in real project
 public class KatalonStudioPrioritizationSession implements PrioritizationSession {
 
-    private KatalonScriptParser scriptParser = new KatalonScriptParser();
-    private KatalonReportsParser reportsParser = new KatalonReportsParser();
+    private final KatalonScriptParser scriptParser;
+    private final KatalonReportsParser reportsParser;
 
-    private RankingAlgorithm rankingAlgorithm;
+    private final RankingAlgorithm rankingAlgorithm;
 
     public KatalonStudioPrioritizationSession(
-        CommandGraphPersistence graphPersistence, RLTCPRankingAlgorithm.Options options
+        CommandGraphPersistence graphPersistence, RLTCPRankingAlgorithm.Options options,
+        KatalonScriptParser scriptParser, KatalonReportsParser reportsParser
     ) {
         this.rankingAlgorithm = new RLTCPRankingAlgorithm(graphPersistence, options);
+        this.scriptParser = scriptParser;
+        this.reportsParser = reportsParser;
     }
 
     @Override

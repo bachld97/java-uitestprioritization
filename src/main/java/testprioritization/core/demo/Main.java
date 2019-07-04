@@ -11,9 +11,8 @@ import java.util.stream.Stream;
 
 public class Main {
     static public void main(String[] argv) {
-        KatalonReportsParser parser = new KatalonReportsParser();
-        String reportPath = "C:\\Users\\bachld\\Desktop\\Code\\thesis\\SampleProject\\Reports\\All\\20190302_230028\\20190302_230028.csv";
-        ExecutionResult result = parser.readOneExecutionResultFromReport(reportPath);
-        System.out.println(result.getNumberOfFailedTests());
+        String sampleProjectPath = "/home/bachld/roadmap/thesis/SampleProject";
+        EvaluationDemo demo = new EvaluationDemo(sampleProjectPath);
+        demo.execute();
     }
 }

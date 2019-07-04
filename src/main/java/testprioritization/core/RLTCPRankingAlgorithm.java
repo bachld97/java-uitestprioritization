@@ -31,6 +31,11 @@ public class RLTCPRankingAlgorithm implements RankingAlgorithm {
     }
 
     @Override
+    public String stringToDisplayApfd(float apfd) {
+        return "RLTCP - " + options.toString() + " - APFD: " + apfd;
+    }
+
+    @Override
     public List<TestCase> rankTestCasesIn(TestSuite suite) {
         if (currentGraph == null) {
             currentGraph = graphPersistence.loadCommandGraph();
@@ -129,6 +134,15 @@ public class RLTCPRankingAlgorithm implements RankingAlgorithm {
             this.maxTrainingIteration = maxTrainingIteration;
             this.penaltyForFailedTestCases = penaltyForFailedTestCases;
             this.penaltyForMisplacedTestCases = penaltyForMisplacedTestCases;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder();
+            builder.append(graphMergeDiscount);
+            builder.append("_");
+            builder.append(penaltyDecayRate);
+            return builder.toString();
         }
     }
 
@@ -275,7 +289,7 @@ public class RLTCPRankingAlgorithm implements RankingAlgorithm {
             List<TestStep> steps = testCase.getTestSteps();
 
             List<CommandGraph.Edge> edges = new ArrayList<>();
-            for (int testStepIndex = 1; testStepIndex <= steps.size(); testStepIndex++) {
+            for (int testStepIndex = 1; testStepIndex < steps.size(); testStepIndex++) {
                 TestStep currentStep = steps.get(testStepIndex);
                 TestStep previousStep = steps.get(testStepIndex - 1);
                 CommandGraph.Edge newEdge = new CommandGraph.Edge(previousStep, currentStep, penaltyAmount);
