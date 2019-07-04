@@ -1,7 +1,5 @@
 package testprioritization.core;
 
-import com.sun.tools.javac.util.Pair;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,7 +61,7 @@ public class CommandGraph {
         }
 
         public boolean equalsToPair(Pair<TestStep, TestStep> pairOfTestSteps) {
-            return pairOfTestSteps.fst == step1 && pairOfTestSteps.snd == step2;
+            return pairOfTestSteps.first == step1 && pairOfTestSteps.second == step2;
         }
 
         @Override

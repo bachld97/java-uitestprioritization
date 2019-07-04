@@ -36,7 +36,7 @@ public class KatalonReportsParser {
                 path -> path.toString().endsWith(".csv")
             ).map(
                 Path::toString
-            );
+            ).sorted();
         } catch (IOException e) {
             reportFilePaths = Stream.empty();
         }
