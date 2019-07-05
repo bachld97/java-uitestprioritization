@@ -63,7 +63,7 @@ public class CommandGraph {
         }
 
         public boolean equalsToPair(Pair<TestStep, TestStep> pairOfTestSteps) {
-            return pairOfTestSteps.first == step1 && pairOfTestSteps.second == step2;
+            return pairOfTestSteps.first.equals(step1) && pairOfTestSteps.second.equals(step2);
         }
 
         @Override
