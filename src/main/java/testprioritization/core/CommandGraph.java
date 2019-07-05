@@ -74,7 +74,7 @@ public class CommandGraph {
             }
 
             Edge otherEdge = (Edge) other;
-            return step1 == otherEdge.step1 && step2 == otherEdge.step2;
+            return step1.equals(otherEdge.step1) && step2.equals(otherEdge.step2);
         }
     }
 }
