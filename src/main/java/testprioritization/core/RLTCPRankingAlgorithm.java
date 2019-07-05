@@ -1,5 +1,7 @@
 package testprioritization.core;
 
+import testprioritization.core.util.Pair;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

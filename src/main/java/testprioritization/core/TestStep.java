@@ -11,4 +11,12 @@ public class TestStep {
     public String getCommand() {
         return command;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof TestStep) {
+            return ((TestStep) obj).getCommand().equals(command);
+        }
+        return false;
+    }
 }
