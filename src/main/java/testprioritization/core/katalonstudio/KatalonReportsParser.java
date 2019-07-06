@@ -113,6 +113,7 @@ public class KatalonReportsParser {
             }
             bufferedReader.close();
 
+            List<TestCase> uniqueTestCases = removeDuplicatedKeepLastTestCaseForEachId(testCases);
             TestSuite suiteUnderExecution = new TestSuite(suiteId, testCases);
             return new ExecutionResult(suiteUnderExecution, didFailMap, failStepMap);
         } catch (Exception e) {
@@ -120,6 +121,24 @@ public class KatalonReportsParser {
             e.printStackTrace();
             return ExecutionResult.empty();
         }
+    }
+
+    private List<TestCase> removeDuplicatedKeepLastTestCaseForEachId(List<TestCase> testCases) {
+        List<TestCase> uniqueTestCases = new ArrayList<>();
+        List<String> includedTestCaseId = new ArrayList<>();
+
+        for (int testCaseIndex = 0; testCaseIndex >= 0; --testCaseIndex) {
+            TestCase testCase = testCases.get(testCaseIndex);
+            String testCaseId = testCase.getId();
+            if (includedTestCaseId.contains(testCaseId)) {
+                continue;
+            } else {
+                includedTestCaseId.add(testCaseId);
+                uniqueTestCases.add(0, testCase);
+            }
+        }
+
+        return uniqueTestCases;
     }
 
     private String getIdStringFrom(String lineFromCsv) {
