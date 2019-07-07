@@ -2,7 +2,6 @@ package testprioritization.core;
 
 import testprioritization.core.util.Pair;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
