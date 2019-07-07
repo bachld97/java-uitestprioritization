@@ -7,6 +7,7 @@ import testprioritization.core.TestSuite;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -131,14 +132,14 @@ public class KatalonReportsParser {
         List<TestCase> uniqueTestCases = new ArrayList<>();
         List<String> includedTestCaseId = new ArrayList<>();
 
-        for (int testCaseIndex = testCases.size() - 1; testCaseIndex >= 0; --testCaseIndex) {
+        for (int testCaseIndex = 0; testCaseIndex < testCases.size(); ++testCaseIndex) {
             TestCase testCase = testCases.get(testCaseIndex);
             String testCaseId = testCase.getId();
             if (includedTestCaseId.contains(testCaseId)) {
                 continue;
             } else {
                 includedTestCaseId.add(testCaseId);
-                uniqueTestCases.add(0, testCase);
+                uniqueTestCases.add(testCase);
             }
         }
 

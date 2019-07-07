@@ -2,6 +2,8 @@ package testprioritization.core;
 
 import testprioritization.core.util.Pair;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -162,7 +164,7 @@ public class RLTCPRankingAlgorithm implements RankingAlgorithm {
 
         @Override
         public int compareTo(TestCaseWrapper testCaseWrapper) {
-            return (int) (testCaseWrapper.weight - weight);
+            return Float.compare(testCaseWrapper.weight, weight);
         }
     }
 
