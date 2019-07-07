@@ -77,6 +77,8 @@ public class KatalonReportsParser {
                     if (isNotFirstEmptyRow) {
                         TestCase tc = new TestCase(currentTestCaseId, stepsInCurrentTestCase);
                         testCases.add(tc);
+                        currentTestCaseId = null;
+                        stepsInCurrentTestCase = null;
                     } else {
                         isNotFirstEmptyRow = true;
                     }
@@ -113,8 +115,10 @@ public class KatalonReportsParser {
             }
             bufferedReader.close();
 
+            testCases.add(new TestCase(currentTestCaseId, stepsInCurrentTestCase));
+
             List<TestCase> uniqueTestCases = removeDuplicatedKeepLastTestCaseForEachId(testCases);
-            TestSuite suiteUnderExecution = new TestSuite(suiteId, testCases);
+            TestSuite suiteUnderExecution = new TestSuite(suiteId, uniqueTestCases);
             return new ExecutionResult(suiteUnderExecution, didFailMap, failStepMap);
         } catch (Exception e) {
             System.err.format("Cannot read report file '%s'.", reportPath);
@@ -127,7 +131,7 @@ public class KatalonReportsParser {
         List<TestCase> uniqueTestCases = new ArrayList<>();
         List<String> includedTestCaseId = new ArrayList<>();
 
-        for (int testCaseIndex = 0; testCaseIndex >= 0; --testCaseIndex) {
+        for (int testCaseIndex = testCases.size() - 1; testCaseIndex >= 0; --testCaseIndex) {
             TestCase testCase = testCases.get(testCaseIndex);
             String testCaseId = testCase.getId();
             if (includedTestCaseId.contains(testCaseId)) {
