@@ -165,7 +165,7 @@ public class RLTCPRankingAlgorithm implements RankingAlgorithm {
 
         @Override
         public int compareTo(TestCaseWrapper testCaseWrapper) {
-            return (int) (testCaseWrapper.weight - weight);
+            return Float.compare(testCaseWrapper.weight, weight);
         }
     }
 
