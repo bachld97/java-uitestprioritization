@@ -77,12 +77,16 @@ public class RLTCPRankingAlgorithm implements RankingAlgorithm {
         boolean firstLoop = true;
         boolean notDone = true;
         TestSuite suiteUnderExecution = executionResult.getSuiteUnderExecution();
-        List<TestCase> previouslyRankedTestCases = graphPersistence.loadRankedTestCaseForSuite(suiteUnderExecution);
+        List<TestCase> previouslyRankedTestCases = null;
         int currentIterationCount = 0;
 
         while (notDone && currentIterationCount < options.maxTrainingIteration) {
             float failPenalty = (firstLoop) ? options.penaltyForFailedTestCases : 0f;
             float outOfOrderPenalty = options.penaltyForMisplacedTestCases;
+
+            previouslyRankedTestCases = this.rankTestCasesIn(suiteUnderExecution);
+            notDone = stopper.shouldContinueTraining(executionResult, previouslyRankedTestCases);
+
             WeightPolicy weightPolicy = new WeightPolicy(
                 executionResult, previouslyRankedTestCases, failPenalty, outOfOrderPenalty, options.penaltyDecayRate
             );
@@ -92,7 +96,6 @@ public class RLTCPRankingAlgorithm implements RankingAlgorithm {
 
             firstLoop = false;
             currentIterationCount += 1;
-            notDone = stopper.shouldContinueTraining(executionResult, previouslyRankedTestCases);
         }
 
          graphPersistence.save(currentGraph);
